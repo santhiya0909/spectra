@@ -106,3 +106,12 @@ def update_alert(
         status=alert.status,
         created_at=alert.created_at
     )
+
+@router.get("/analytics/detailed")
+def read_detailed_analytics(
+    current_user: User = Depends(require_role(["TEACHER", "ADMIN"])),
+    db: Session = Depends(get_db)
+):
+    """Retrieve comprehensive puzzle & quiz analytics (Requirement 33)."""
+    from app.services.teacher_service import get_puzzle_and_quiz_analytics
+    return get_puzzle_and_quiz_analytics(db)

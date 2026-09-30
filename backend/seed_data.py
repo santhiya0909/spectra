@@ -58,6 +58,13 @@ def seed_subjects():
 if __name__ == "__main__":
     seed_subjects()
     print("Default subjects setup completed.")
+    try:
+        from scripts.seed_full_curriculum import seed_database_curriculum
+        seed_database_curriculum()
+        print("Full curriculum seeding completed.")
+    except Exception as e:
+        print(f"Curriculum seeding error: {e}")
+
     from scripts.seed_curriculum import seed_curriculum_data
     seed_curriculum_data()
     print("Complete curriculum setup completed.")

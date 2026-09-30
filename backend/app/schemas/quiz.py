@@ -1,10 +1,11 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, List, Any
 from datetime import datetime
 
 class QuestionBase(BaseModel):
     subject_id: int
     topic_id: int
+    lesson_id: Optional[int] = None
     question_text: str
     question_type: str = "MCQ"
     options: List[str]
@@ -19,14 +20,14 @@ class QuestionOut(BaseModel):
     id: int
     subject_id: int
     topic_id: int
+    lesson_id: Optional[int] = None
     topic_name: Optional[str] = None
     question_text: str
     question_type: str
     options: List[str]
     difficulty: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class QuestionReviewOut(BaseModel):
     id: int
@@ -41,9 +42,11 @@ class QuestionReviewOut(BaseModel):
 
 class QuizBase(BaseModel):
     subject_id: int
+    lesson_id: Optional[int] = None
+    topic_id: Optional[int] = None
     title: str
     description: Optional[str] = None
-    quiz_type: str = "TOPIC_ASSESSMENT"
+    quiz_type: str = "LESSON"
     difficulty: str = "MEDIUM"
     question_count: int = 5
 
@@ -56,8 +59,7 @@ class QuizOut(QuizBase):
     best_score: Optional[float] = None
     attempts_count: Optional[int] = 0
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class QuizDetailOut(QuizOut):
     questions: List[QuestionOut] = []
@@ -80,8 +82,7 @@ class QuizAttemptOut(BaseModel):
     started_at: datetime
     completed_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class QuizResultOut(BaseModel):
     attempt_id: int
@@ -91,6 +92,8 @@ class QuizResultOut(BaseModel):
     total_questions: int
     percentage: float
     status: str
+    xp_earned: int = 0
+    is_perfect: bool = False
     questions_review: List[QuestionReviewOut]
     weak_topics: List[str]
     recommendations_generated: List[str]

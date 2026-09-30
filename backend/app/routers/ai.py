@@ -27,6 +27,9 @@ async def chat_with_tutor(
         conversation_id=request.conversation_id,
         subject_id=request.subject_id,
         topic_id=request.topic_id,
+        lesson_id=request.lesson_id,
+        puzzle_id=request.puzzle_id,
+        action_type=request.action_type,
         is_during_quiz=request.is_during_quiz
     )
     return response

@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 interface RequestOptions extends RequestInit {
   data?: any;
@@ -52,8 +52,25 @@ class ApiClient {
       }
 
       if (!response.ok) {
-        const errorBody = await response.json().catch(() => ({}));
-        const errorMessage = errorBody.detail || errorBody.message || `Request failed with status ${response.status}`;
+        let errorMessage = `Request failed with status ${response.status}`;
+        try {
+          const errorBody = await response.json();
+          if (typeof errorBody.detail === "string") {
+            errorMessage = errorBody.detail;
+          } else if (Array.isArray(errorBody.detail)) {
+            // Format FastAPI 422 validation errors into user-friendly message
+            errorMessage = errorBody.detail
+              .map((err: any) => {
+                const field = Array.isArray(err.loc) ? err.loc[err.loc.length - 1] : "";
+                return field ? `${field}: ${err.msg}` : err.msg;
+              })
+              .join("; ");
+          } else if (typeof errorBody.message === "string") {
+            errorMessage = errorBody.message;
+          }
+        } catch {
+          // Non-JSON response body
+        }
         throw new Error(errorMessage);
       }
 
@@ -62,6 +79,16 @@ class ApiClient {
       return text ? JSON.parse(text) : ({} as T);
     } catch (error: any) {
       console.error(`[API Error] ${options.method || "GET"} ${url}:`, error.message);
+      if (
+        error.message === "Failed to fetch" ||
+        error.name === "TypeError" ||
+        error.message?.includes("NetworkError") ||
+        error.message?.includes("fetch")
+      ) {
+        throw new Error(
+          "Unable to connect to the SPECTRA server. Please verify that the backend is running on http://127.0.0.1:8000."
+        );
+      }
       throw error;
     }
   }

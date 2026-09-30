@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from typing import Optional
 from datetime import datetime
 
@@ -32,16 +32,14 @@ class StudentProfileOut(BaseModel):
     academic_year: str
     learning_preferences: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class TeacherProfileOut(BaseModel):
     id: int
     employee_id: str
     department: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class UserOut(BaseModel):
     id: int
@@ -52,5 +50,4 @@ class UserOut(BaseModel):
     student_profile: Optional[StudentProfileOut] = None
     teacher_profile: Optional[TeacherProfileOut] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

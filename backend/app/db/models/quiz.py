@@ -9,6 +9,7 @@ class Question(Base):
     id = Column(Integer, primary_key=True, index=True)
     subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False, index=True)
     topic_id = Column(Integer, ForeignKey("topics.id", ondelete="CASCADE"), nullable=False, index=True)
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"), nullable=True, index=True)
     question_text = Column(Text, nullable=False)
     question_type = Column(String(20), default="MCQ")  # MCQ, MULTI_SELECT
     options = Column(Text, nullable=False)  # JSON-encoded array of options: ["A) ...", "B) ..."]
@@ -18,6 +19,7 @@ class Question(Base):
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
 
     topic = relationship("Topic", back_populates="questions")
+    lesson = relationship("Lesson", back_populates="questions")
     quiz_associations = relationship("QuizQuestion", back_populates="question", cascade="all, delete-orphan")
     responses = relationship("QuizResponse", back_populates="question")
 
@@ -26,13 +28,17 @@ class Quiz(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False, index=True)
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"), nullable=True, index=True)
+    topic_id = Column(Integer, ForeignKey("topics.id", ondelete="CASCADE"), nullable=True, index=True)
     title = Column(String(150), nullable=False)
     description = Column(Text, nullable=True)
-    quiz_type = Column(String(30), default="TOPIC_ASSESSMENT")  # TOPIC_ASSESSMENT, ADAPTIVE, PRACTICE
+    quiz_type = Column(String(30), default="LESSON")  # LESSON, TOPIC, ASSESSMENT, PRACTICE, ADAPTIVE
     difficulty = Column(String(20), default="MEDIUM")
     question_count = Column(Integer, default=5)
 
     subject = relationship("Subject", back_populates="quizzes")
+    lesson = relationship("Lesson", back_populates="quizzes")
+    topic = relationship("Topic", back_populates="quizzes")
     quiz_questions = relationship("QuizQuestion", back_populates="quiz", cascade="all, delete-orphan", order_by="QuizQuestion.order_index")
     attempts = relationship("QuizAttempt", back_populates="quiz", cascade="all, delete-orphan")
 

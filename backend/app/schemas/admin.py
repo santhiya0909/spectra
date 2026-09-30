@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 from datetime import datetime
 from app.schemas.auth import UserOut
@@ -15,8 +15,7 @@ class AuditLogOut(BaseModel):
     entity_id: Optional[str]
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class AdminDashboardOut(BaseModel):
     total_users: int

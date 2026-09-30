@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminService } from "@/services/admin.service";
-import { subjectService } from "@/services/subject.service";
 import { RoleLayout } from "@/components/layout/RoleLayout";
 import { Badge } from "@/components/common/Badge";
 import { Plus, Layers, Loader2 } from "lucide-react";
@@ -48,12 +47,11 @@ export default function AdminTopicsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Curriculum Topics</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Curriculum Topics</h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Granular topic nodes monitored for knowledge gap diagnosis.
             </p>
           </div>
-
           <button
             onClick={() => setShowAddModal(true)}
             className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-brand-700"
@@ -63,17 +61,17 @@ export default function AdminTopicsPage() {
           </button>
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-6 shadow-sm">
           {isLoading ? (
             <div className="space-y-3 animate-pulse">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-14 bg-slate-100 rounded-xl" />
+                <div key={i} className="h-14 bg-slate-100 dark:bg-white/[0.04] rounded-xl" />
               ))}
             </div>
           ) : topics && topics.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                <thead className="border-b border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.03] text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   <tr>
                     <th className="px-4 py-3">Topic ID</th>
                     <th className="px-4 py-3">Topic Name</th>
@@ -81,12 +79,12 @@ export default function AdminTopicsPage() {
                     <th className="px-4 py-3 text-right">Difficulty</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
                   {topics.map((t: any) => (
-                    <tr key={t.id} className="hover:bg-slate-50 transition">
+                    <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.03] transition">
                       <td className="px-4 py-3.5 font-mono text-slate-400">#{t.id}</td>
-                      <td className="px-4 py-3.5 font-bold text-slate-900">{t.name}</td>
-                      <td className="px-4 py-3.5 text-slate-500 max-w-sm truncate">{t.description}</td>
+                      <td className="px-4 py-3.5 font-bold text-slate-900 dark:text-white">{t.name}</td>
+                      <td className="px-4 py-3.5 text-slate-500 dark:text-slate-400 max-w-sm truncate">{t.description}</td>
                       <td className="px-4 py-3.5 text-right">
                         <Badge
                           variant={t.difficulty_level === "EASY" ? "emerald" : t.difficulty_level === "MEDIUM" ? "brand" : "purple"}
@@ -107,17 +105,17 @@ export default function AdminTopicsPage() {
 
         {/* Add Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-            <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl border border-slate-200">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">Add Curriculum Topic</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-black/60 backdrop-blur-sm p-4">
+            <div className="w-full max-w-md rounded-3xl bg-white dark:bg-[#0B1124] p-6 shadow-xl border border-slate-200 dark:border-white/[0.08]">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Add Curriculum Topic</h3>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Subject</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Subject</label>
                   <select
                     value={subjectId}
                     onChange={(e) => setSubjectId(Number(e.target.value))}
-                    className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-brand-500"
+                    className="w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 text-sm outline-none focus:border-brand-500 dark:focus:border-cyan-500"
                   >
                     {subjects?.map((s: any) => (
                       <option key={s.id} value={s.id}>
@@ -128,22 +126,22 @@ export default function AdminTopicsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Topic Name</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Topic Name</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Memory Garbage Collection"
-                    className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-brand-500"
+                    className="w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 text-sm outline-none focus:border-brand-500 dark:focus:border-cyan-500 placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Difficulty</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Difficulty</label>
                   <select
                     value={difficultyLevel}
                     onChange={(e) => setDifficultyLevel(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-brand-500"
+                    className="w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 text-sm outline-none focus:border-brand-500 dark:focus:border-cyan-500"
                   >
                     <option value="EASY">EASY</option>
                     <option value="MEDIUM">MEDIUM</option>
@@ -152,12 +150,12 @@ export default function AdminTopicsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Description</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Description</label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={2}
-                    className="w-full rounded-xl border border-slate-200 p-2.5 text-sm outline-none focus:border-brand-500"
+                    className="w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 text-sm outline-none focus:border-brand-500 dark:focus:border-cyan-500"
                   />
                 </div>
 
@@ -165,7 +163,7 @@ export default function AdminTopicsPage() {
                   <button
                     type="button"
                     onClick={() => setShowAddModal(false)}
-                    className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                    className="rounded-xl border border-slate-200 dark:border-white/[0.08] px-4 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.06]"
                   >
                     Cancel
                   </button>

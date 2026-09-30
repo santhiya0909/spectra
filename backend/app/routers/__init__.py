@@ -9,6 +9,8 @@ from app.routers.ai import router as ai_router
 from app.routers.teacher import router as teacher_router
 from app.routers.admin import router as admin_router
 from app.routers.health import router as health_router
+from app.routers.puzzles import router as puzzles_router
+from app.routers.knowledge_dna import router as knowledge_dna_router
 
 __all__ = [
     "auth_router",
@@ -22,4 +24,6 @@ __all__ = [
     "teacher_router",
     "admin_router",
     "health_router",
+    "puzzles_router",
+    "knowledge_dna_router",
 ]

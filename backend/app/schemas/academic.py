@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Optional, List, Any
 from datetime import datetime
 
 # STUDY RESOURCE SCHEMAS
@@ -33,8 +33,7 @@ class StudyResourceOut(StudyResourceBase):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # TOPIC SCHEMAS
 class TopicBase(BaseModel):
@@ -64,8 +63,7 @@ class TopicOut(TopicBase):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # LESSON SCHEMAS
 class LessonBase(BaseModel):
@@ -112,17 +110,27 @@ class LessonOut(LessonBase):
     subject_name: Optional[str] = None
     status: Optional[str] = "NOT_STARTED"
     completion_percentage: Optional[float] = 0.0
+    topics_completed: Optional[int] = 0
+    puzzles_completed: Optional[int] = 0
+    quiz_completed: Optional[bool] = False
+    xp_earned: Optional[int] = 0
     topics: List[TopicOut] = []
     study_resources: List[StudyResourceOut] = []
+    puzzles: List[Any] = []
+    quizzes: List[Any] = []
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class LessonProgressUpdate(BaseModel):
-    status: str = Field(..., pattern="^(NOT_STARTED|IN_PROGRESS|COMPLETED)$")
-    completion_percentage: float = Field(..., ge=0.0, le=100.0)
+    status: Optional[str] = "IN_PROGRESS"
+    completion_percentage: Optional[float] = None
+    action_type: Optional[str] = None  # TOPIC_READ, PUZZLE_SOLVED, QUIZ_PASSED, MANUAL_COMPLETE
+    topic_id: Optional[int] = None
+    puzzle_id: Optional[int] = None
+    quiz_id: Optional[int] = None
+    quiz_score: Optional[float] = None
 
 # SUBJECT SCHEMAS
 class SubjectBase(BaseModel):
@@ -155,11 +163,12 @@ class SubjectOut(SubjectBase):
     lessons_count: Optional[int] = 0
     quizzes_count: Optional[int] = 0
     progress_percentage: Optional[float] = 0.0
+    completed_lessons_count: Optional[int] = 0
+    current_lesson: Optional[Any] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 # UTILITY REORDER SCHEMAS
 class ReorderItem(BaseModel):
@@ -171,3 +180,22 @@ class ReorderRequest(BaseModel):
 
 class StatusToggleRequest(BaseModel):
     is_active: bool
+
+# YOUTUBE RECOMMENDATION SCHEMAS
+class YouTubeVideoOut(BaseModel):
+    video_id: str
+    title: str
+    thumbnail_url: str
+    channel_name: str
+    duration: Optional[str] = None
+    description: Optional[str] = None
+    url: str
+    published_at: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+class LessonYouTubeResponse(BaseModel):
+    lesson_id: int
+    lesson_title: Optional[str] = None
+    query_used: Optional[str] = None
+    videos: List[YouTubeVideoOut] = []

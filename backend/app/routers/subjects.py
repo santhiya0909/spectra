@@ -14,7 +14,7 @@ from app.db.models.academic import (
 )
 from app.db.models.quiz import Quiz
 from app.schemas.academic import SubjectOut, TopicOut, LessonOut, StudyResourceOut
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_optional_current_user
 from app.db.models.user import User, StudentProfile
 from app.services.enrollment import enroll_student_in_default_subjects
 
@@ -31,7 +31,7 @@ def get_subjects(
     category: Optional[str] = Query(None),
     difficulty: Optional[str] = Query(None),
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
 ):
     """
     Retrieve active subjects for students with optional search, category, and difficulty filtering.
@@ -87,18 +87,31 @@ def get_subjects(
         quizzes = db.query(Quiz).filter(Quiz.subject_id == subject.id).all()
 
         progress_percentage = 0.0
-        if student and lessons:
-            lesson_ids = [l.id for l in lessons]
-            completed = (
-                db.query(LessonProgress)
-                .filter(
-                    LessonProgress.student_id == student.id,
-                    LessonProgress.lesson_id.in_(lesson_ids),
-                    LessonProgress.status == "COMPLETED",
+        completed = 0
+        current_lesson = None
+        if lessons:
+            if student:
+                lesson_ids = [l.id for l in lessons]
+                completed_progs = (
+                    db.query(LessonProgress)
+                    .filter(
+                        LessonProgress.student_id == student.id,
+                        LessonProgress.lesson_id.in_(lesson_ids),
+                    )
+                    .all()
                 )
-                .count()
-            )
-            progress_percentage = round(completed / len(lessons) * 100.0, 1)
+                completed_ids = {p.lesson_id for p in completed_progs if p.status == "COMPLETED"}
+                completed = len(completed_ids)
+                progress_percentage = round(completed / len(lessons) * 100.0, 1)
+
+                for l in lessons:
+                    if l.id not in completed_ids:
+                        current_lesson = {"id": l.id, "title": l.title, "lesson_order": l.lesson_order}
+                        break
+                if not current_lesson and lessons:
+                    current_lesson = {"id": lessons[-1].id, "title": lessons[-1].title, "lesson_order": lessons[-1].lesson_order}
+            else:
+                current_lesson = {"id": lessons[0].id, "title": lessons[0].title, "lesson_order": lessons[0].lesson_order}
 
         results.append(
             SubjectOut(
@@ -117,6 +130,8 @@ def get_subjects(
                 lessons_count=len(lessons),
                 quizzes_count=len(quizzes),
                 progress_percentage=progress_percentage,
+                completed_lessons_count=completed,
+                current_lesson=current_lesson,
             )
         )
 
@@ -131,7 +146,7 @@ def get_subjects(
 def get_subject_detail(
     subject_id: int,
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
 ):
     """
     Get detailed view of a subject with active lessons, child topics, study resources, and student progress.
@@ -177,8 +192,11 @@ def get_subject_detail(
     quizzes = db.query(Quiz).filter(Quiz.subject_id == subject.id).all()
 
     # Calculate overall progress and lesson specific statuses
+    completed_count = 0
     progress_percentage = 0.0
     lesson_progress_map = {}
+    current_lesson = None
+
     if student and lessons:
         lesson_ids = [l.id for l in lessons]
         progs = (
@@ -194,6 +212,16 @@ def get_subject_detail(
 
         completed_count = sum(1 for p in progs if p.status == "COMPLETED")
         progress_percentage = round(completed_count / len(lessons) * 100.0, 1)
+
+        for l in lessons:
+            p = lesson_progress_map.get(l.id)
+            if not p or p.status != "COMPLETED":
+                current_lesson = {"id": l.id, "title": l.title, "lesson_order": l.lesson_order}
+                break
+        if not current_lesson and lessons:
+            current_lesson = {"id": lessons[-1].id, "title": lessons[-1].title, "lesson_order": lessons[-1].lesson_order}
+    elif lessons:
+        current_lesson = {"id": lessons[0].id, "title": lessons[0].title, "lesson_order": lessons[0].lesson_order}
 
     lesson_outs = []
     for l in lessons:
@@ -260,6 +288,8 @@ def get_subject_detail(
         lessons_count=len(lessons),
         quizzes_count=len(quizzes),
         progress_percentage=progress_percentage,
+        completed_lessons_count=completed_count,
+        current_lesson=current_lesson,
     )
 
 
@@ -271,7 +301,7 @@ def get_subject_detail(
 def get_subject_topics(
     subject_id: int,
     db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user),
+    current_user: Optional[User] = Depends(get_optional_current_user),
 ):
     """
     Retrieve all active topics under a specific subject.

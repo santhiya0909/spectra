@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -421,7 +421,7 @@ export default function AdminSubjectsPage() {
             </div>
 
             {/* Filter Toolbar */}
-            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-3.5 shadow-sm">
               <div className="relative flex-1">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
@@ -429,7 +429,7 @@ export default function AdminSubjectsPage() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Filter subjects by name, code, or description..."
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-brand-500 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.06] pl-10 pr-4 py-2 text-xs font-medium text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-white/[0.08] focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                 />
               </div>
 
@@ -437,7 +437,7 @@ export default function AdminSubjectsPage() {
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-none"
+                  className="rounded-xl border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.06] px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:bg-white dark:focus:bg-white/[0.08] focus:outline-none"
                 >
                   <option value="ALL">All Categories</option>
                   <option value="PROGRAMMING">Programming</option>
@@ -449,7 +449,7 @@ export default function AdminSubjectsPage() {
                 <select
                   value={difficultyFilter}
                   onChange={(e) => setDifficultyFilter(e.target.value)}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-none"
+                  className="rounded-xl border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.06] px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:bg-white dark:focus:bg-white/[0.08] focus:outline-none"
                 >
                   <option value="ALL">All Difficulties</option>
                   <option value="BEGINNER">Beginner</option>
@@ -460,7 +460,7 @@ export default function AdminSubjectsPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-none"
+                  className="rounded-xl border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.06] px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:bg-white dark:focus:bg-white/[0.08] focus:outline-none"
                 >
                   <option value="ALL">All Visibility</option>
                   <option value="ACTIVE">Active Only</option>
@@ -470,22 +470,22 @@ export default function AdminSubjectsPage() {
             </div>
 
             {/* Subjects Table */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm overflow-hidden">
+            <div className="rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-6 shadow-sm overflow-hidden">
               {subjectsLoading ? (
                 <div className="space-y-3 animate-pulse">
                   {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="h-16 bg-slate-100 rounded-xl" />
+                    <div key={i} className="h-16 bg-slate-100 dark:bg-white/[0.04] rounded-xl" />
                   ))}
                 </div>
               ) : subjects.length === 0 ? (
-                <div className="p-12 text-center text-slate-500">
-                  <BookOpen className="h-10 w-10 mx-auto text-slate-300 mb-2" />
+                <div className="p-12 text-center text-slate-500 dark:text-slate-400">
+                  <BookOpen className="h-10 w-10 mx-auto text-slate-300 dark:text-slate-600 mb-2" />
                   <p className="text-sm font-semibold">No subjects match the filter criteria.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    <thead className="border-b border-slate-200 dark:border-white/[0.06] bg-slate-50 dark:bg-white/[0.03] text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                       <tr>
                         <th className="px-4 py-3">Order</th>
                         <th className="px-4 py-3">Code</th>
@@ -496,38 +496,38 @@ export default function AdminSubjectsPage() {
                         <th className="px-4 py-3 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04]">
                       {subjects.map((s, idx) => (
-                        <tr key={s.id} className="hover:bg-slate-50/80 transition">
+                        <tr key={s.id} className="hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition">
                           <td className="px-4 py-3.5">
                             <div className="flex items-center gap-1 text-slate-400">
                               <button
                                 onClick={() => handleMoveSubject(idx, "up")}
                                 disabled={idx === 0}
-                                className="rounded p-1 hover:bg-slate-200 disabled:opacity-30"
+                                className="rounded p-1 hover:bg-slate-200 dark:hover:bg-white/[0.08] disabled:opacity-30"
                               >
                                 <ArrowUp className="h-3.5 w-3.5" />
                               </button>
                               <button
                                 onClick={() => handleMoveSubject(idx, "down")}
                                 disabled={idx === subjects.length - 1}
-                                className="rounded p-1 hover:bg-slate-200 disabled:opacity-30"
+                                className="rounded p-1 hover:bg-slate-200 dark:hover:bg-white/[0.08] disabled:opacity-30"
                               >
                                 <ArrowDown className="h-3.5 w-3.5" />
                               </button>
                             </div>
                           </td>
-                          <td className="px-4 py-3.5 font-bold text-brand-600">{s.code}</td>
+                          <td className="px-4 py-3.5 font-bold text-brand-600 dark:text-cyan-400">{s.code}</td>
                           <td className="px-4 py-3.5">
-                            <div className="font-bold text-slate-900">{s.name}</div>
-                            <div className="text-[11px] text-slate-500 max-w-xs truncate">{s.description}</div>
+                            <div className="font-bold text-slate-900 dark:text-white">{s.name}</div>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 max-w-xs truncate">{s.description}</div>
                           </td>
                           <td className="px-4 py-3.5">
-                            <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 uppercase">
+                            <span className="rounded bg-slate-100 dark:bg-white/[0.06] px-2 py-0.5 text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">
                               {s.category?.replace(/_/g, " ") || "GENERAL"}
                             </span>
                           </td>
-                          <td className="px-4 py-3.5 font-semibold text-slate-700">
+                          <td className="px-4 py-3.5 font-semibold text-slate-700 dark:text-slate-300">
                             {s.lessons_count} Modules
                           </td>
                           <td className="px-4 py-3.5">
@@ -540,8 +540,8 @@ export default function AdminSubjectsPage() {
                               }
                               className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold transition ${
                                 s.is_active
-                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
-                                  : "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100"
+                                  ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 hover:bg-emerald-100 dark:hover:bg-emerald-900/30"
+                                  : "bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 hover:bg-rose-100 dark:hover:bg-rose-900/30"
                               }`}
                             >
                               {s.is_active ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
@@ -552,14 +552,14 @@ export default function AdminSubjectsPage() {
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => setSelectedSubjectId(s.id)}
-                                className="inline-flex items-center gap-1 rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200 px-2.5 py-1.5 text-xs font-bold transition"
+                                className="inline-flex items-center gap-1 rounded-lg bg-brand-50 dark:bg-cyan-900/20 hover:bg-brand-100 dark:hover:bg-cyan-900/30 text-brand-700 dark:text-cyan-300 border border-brand-200 dark:border-cyan-500/30 px-2.5 py-1.5 text-xs font-bold transition"
                               >
                                 <Layers className="h-3.5 w-3.5" />
                                 <span>Curriculum</span>
                               </button>
                               <button
                                 onClick={() => handleOpenSubjectModal(s)}
-                                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+                                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.06] hover:text-slate-700 dark:hover:text-white transition"
                               >
                                 <Edit2 className="h-3.5 w-3.5" />
                               </button>
@@ -569,7 +569,7 @@ export default function AdminSubjectsPage() {
                                     deleteSubjectMutation.mutate(s.id);
                                   }
                                 }}
-                                className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition"
+                                className="rounded-lg p-1.5 text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 hover:text-rose-600 dark:hover:text-rose-400 transition"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
                               </button>
@@ -597,11 +597,11 @@ export default function AdminSubjectsPage() {
             </div>
 
             {selectedSubjectLoading ? (
-              <div className="h-64 bg-slate-200 rounded-3xl animate-pulse" />
+              <div className="h-64 bg-slate-200 dark:bg-slate-700/40 rounded-3xl animate-pulse" />
             ) : selectedSubject ? (
               <div className="space-y-6">
                 {/* Subject Header Card */}
-                <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+                <div className="rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-6 sm:p-8 shadow-sm">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
@@ -621,8 +621,8 @@ export default function AdminSubjectsPage() {
                           {selectedSubject.difficulty_level || "ALL LEVELS"}
                         </Badge>
                       </div>
-                      <h1 className="text-2xl font-bold text-slate-900">{selectedSubject.name}</h1>
-                      <p className="mt-1 text-xs sm:text-sm text-slate-600 max-w-2xl">{selectedSubject.description}</p>
+                      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{selectedSubject.name}</h1>
+                      <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl">{selectedSubject.description}</p>
                     </div>
 
                     <div className="flex items-center gap-2 self-start sm:self-center">
@@ -640,14 +640,14 @@ export default function AdminSubjectsPage() {
                 {/* Modules & Deep Hierarchy List */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-base font-bold text-slate-900">
+                    <h2 className="text-base font-bold text-slate-900 dark:text-white">
                       Curriculum Modules ({selectedSubject.lessons?.length || 0})
                     </h2>
-                    <span className="text-xs text-slate-500">Hierarchy: Subject → Lesson → Topics → Study Resources</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">Hierarchy: Subject → Lesson → Topics → Study Resources</span>
                   </div>
 
                   {!selectedSubject.lessons || selectedSubject.lessons.length === 0 ? (
-                    <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center text-slate-500">
+                    <div className="rounded-3xl border border-dashed border-slate-300 dark:border-white/10 bg-white dark:bg-white/[0.02] p-12 text-center text-slate-500 dark:text-slate-400">
                       <BookOpen className="h-10 w-10 mx-auto text-slate-300 mb-2" />
                       <p className="text-sm font-semibold">No modules configured yet for this subject.</p>
                       <button
@@ -663,10 +663,10 @@ export default function AdminSubjectsPage() {
                       {selectedSubject.lessons.map((lesson, lIdx) => (
                         <div
                           key={lesson.id}
-                          className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-4"
+                          className="rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-6 shadow-sm space-y-4"
                         >
                           {/* Module Header Bar */}
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-white/[0.06]">
                             <div className="flex items-start gap-3">
                               <div className="flex items-center gap-1 text-slate-400 pt-1">
                                 <button
@@ -707,9 +707,9 @@ export default function AdminSubjectsPage() {
                                     {lesson.estimated_duration || lesson.estimated_minutes || 15} mins
                                   </span>
                                 </div>
-                                <h3 className="text-base font-bold text-slate-900 mt-1">{lesson.title}</h3>
+                                <h3 className="text-base font-bold text-slate-900 dark:text-white mt-1">{lesson.title}</h3>
                                 {lesson.short_description && (
-                                  <p className="text-xs text-slate-500 mt-0.5">{lesson.short_description}</p>
+                                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{lesson.short_description}</p>
                                 )}
                               </div>
                             </div>
@@ -753,15 +753,15 @@ export default function AdminSubjectsPage() {
                           </div>
 
                           {/* Child Topics Section */}
-                          <div className="rounded-2xl bg-slate-50/70 border border-slate-200/70 p-4 space-y-3">
+                          <div className="rounded-2xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/70 dark:border-white/[0.06] p-4 space-y-3">
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                                <Layers className="h-3.5 w-3.5 text-indigo-600" />
+                              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
+                                <Layers className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                                 <span>Child Topics ({lesson.topics?.length || 0})</span>
                               </div>
                               <button
                                 onClick={() => handleOpenTopicModal(lesson.id)}
-                                className="inline-flex items-center gap-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2 py-1 text-[11px] font-bold transition"
+                                className="inline-flex items-center gap-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-1 text-[11px] font-bold transition"
                               >
                                 <Plus className="h-3 w-3" />
                                 <span>Add Topic</span>
@@ -775,11 +775,11 @@ export default function AdminSubjectsPage() {
                                 {lesson.topics.map((t) => (
                                   <div
                                     key={t.id}
-                                    className="flex items-center justify-between rounded-xl bg-white border border-slate-200 px-3 py-2 text-xs"
+                                    className="flex items-center justify-between rounded-xl bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06] px-3 py-2 text-xs"
                                   >
                                     <div>
-                                      <span className="font-semibold text-slate-900">{t.name}</span>
-                                      <span className="ml-2 text-[10px] text-slate-500 font-medium">
+                                      <span className="font-semibold text-slate-900 dark:text-white">{t.name}</span>
+                                      <span className="ml-2 text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                                         ({t.difficulty_level})
                                       </span>
                                     </div>
@@ -792,14 +792,14 @@ export default function AdminSubjectsPage() {
                                           })
                                         }
                                         className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${
-                                          t.is_active ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
+                                          t.is_active ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400" : "bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400"
                                         }`}
                                       >
                                         {t.is_active ? "Active" : "Off"}
                                       </button>
                                       <button
                                         onClick={() => handleOpenTopicModal(lesson.id, t)}
-                                        className="p-1 text-slate-400 hover:text-slate-700"
+                                        className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white"
                                       >
                                         <Edit2 className="h-3 w-3" />
                                       </button>
@@ -809,7 +809,7 @@ export default function AdminSubjectsPage() {
                                             deleteTopicMutation.mutate(t.id);
                                           }
                                         }}
-                                        className="p-1 text-slate-400 hover:text-rose-600"
+                                        className="p-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400"
                                       >
                                         <Trash2 className="h-3 w-3" />
                                       </button>
@@ -821,10 +821,10 @@ export default function AdminSubjectsPage() {
                           </div>
 
                           {/* Child Study Resources Section */}
-                          <div className="rounded-2xl bg-brand-50/40 border border-brand-100 p-4 space-y-3">
+                          <div className="rounded-2xl bg-brand-50/40 dark:bg-cyan-900/[0.08] border border-brand-100 dark:border-cyan-500/20 p-4 space-y-3">
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-                                <Sparkles className="h-3.5 w-3.5 text-brand-600" />
+                              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-200">
+                                <Sparkles className="h-3.5 w-3.5 text-brand-600 dark:text-cyan-400" />
                                 <span>Verified Study Resources ({lesson.study_resources?.length || 0})</span>
                               </div>
                               <button
@@ -843,15 +843,15 @@ export default function AdminSubjectsPage() {
                                 {lesson.study_resources.map((res) => (
                                   <div
                                     key={res.id}
-                                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl bg-white border border-slate-200 px-3.5 py-2.5 text-xs shadow-xs"
+                                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 rounded-xl bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06] px-3.5 py-2.5 text-xs shadow-xs"
                                   >
                                     <div className="space-y-0.5">
                                       <div className="flex items-center gap-2">
-                                        <span className="font-bold text-slate-900">{res.title}</span>
-                                        <span className="rounded bg-brand-50 text-brand-700 border border-brand-100 px-1.5 py-0.2 text-[10px] font-semibold">
+                                        <span className="font-bold text-slate-900 dark:text-white">{res.title}</span>
+                                        <span className="rounded bg-brand-50 dark:bg-cyan-900/20 text-brand-700 dark:text-cyan-300 border border-brand-100 dark:border-cyan-500/20 px-1.5 py-0.2 text-[10px] font-semibold">
                                           {res.provider}
                                         </span>
-                                        <span className="rounded bg-slate-100 px-1.5 py-0.2 text-[10px] font-bold text-slate-600 uppercase">
+                                        <span className="rounded bg-slate-100 dark:bg-white/[0.06] px-1.5 py-0.2 text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase">
                                           {res.resource_type}
                                         </span>
                                       </div>
@@ -859,7 +859,7 @@ export default function AdminSubjectsPage() {
                                         href={res.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-[11px] text-brand-600 hover:underline flex items-center gap-1"
+                                        className="text-[11px] text-brand-600 dark:text-cyan-400 hover:underline flex items-center gap-1"
                                       >
                                         <span>{res.url}</span>
                                         <ExternalLink className="h-2.5 w-2.5" />
@@ -875,14 +875,14 @@ export default function AdminSubjectsPage() {
                                           })
                                         }
                                         className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                                          res.is_active ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"
+                                          res.is_active ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400" : "bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400"
                                         }`}
                                       >
                                         {res.is_active ? "Active" : "Off"}
                                       </button>
                                       <button
                                         onClick={() => handleOpenResourceModal(lesson.id, res)}
-                                        className="p-1 text-slate-400 hover:text-slate-700"
+                                        className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white"
                                       >
                                         <Edit2 className="h-3 w-3" />
                                       </button>
@@ -892,7 +892,7 @@ export default function AdminSubjectsPage() {
                                             deleteResourceMutation.mutate(res.id);
                                           }
                                         }}
-                                        className="p-1 text-slate-400 hover:text-rose-600"
+                                        className="p-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400"
                                       >
                                         <Trash2 className="h-3 w-3" />
                                       </button>
@@ -914,42 +914,42 @@ export default function AdminSubjectsPage() {
 
         {/* ================= MODAL: ADD / EDIT SUBJECT ================= */}
         {showSubjectModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-            <div className="w-full max-w-lg rounded-3xl bg-white p-6 sm:p-7 shadow-xl space-y-4">
-              <h3 className="text-lg font-bold text-slate-900">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs p-4">
+            <div className="w-full max-w-lg rounded-3xl bg-white dark:bg-[#0B1124] p-6 sm:p-7 shadow-xl space-y-4 border border-slate-100 dark:border-white/[0.08]">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingSubject ? "Edit Subject" : "Create New Academic Subject"}
               </h3>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="font-bold text-slate-700">Subject Name</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Subject Name</label>
                   <input
                     type="text"
                     value={subName}
                     onChange={(e) => setSubName(e.target.value)}
                     placeholder="e.g. Artificial Intelligence & Machine Learning"
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-slate-700">Subject Code</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Subject Code</label>
                     <input
                       type="text"
                       value={subCode}
                       onChange={(e) => setSubCode(e.target.value)}
                       placeholder="e.g. AIML"
-                      className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 uppercase focus:border-brand-500 focus:outline-none"
+                      className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 uppercase focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="font-bold text-slate-700">Category</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Category</label>
                     <select
                       value={subCategory}
                       onChange={(e) => setSubCategory(e.target.value)}
-                      className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                      className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                     >
                       <option value="PROGRAMMING">Programming</option>
                       <option value="DATA_ENGINEERING">Data Engineering</option>
@@ -962,11 +962,11 @@ export default function AdminSubjectsPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-slate-700">Difficulty Level</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Difficulty Level</label>
                     <select
                       value={subDifficulty}
                       onChange={(e) => setSubDifficulty(e.target.value)}
-                      className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                      className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                     >
                       <option value="BEGINNER">Beginner</option>
                       <option value="INTERMEDIATE">Intermediate</option>
@@ -975,7 +975,7 @@ export default function AdminSubjectsPage() {
                   </div>
 
                   <div>
-                    <label className="font-bold text-slate-700">Student Visibility</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Student Visibility</label>
                     <div className="mt-2 flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -984,7 +984,7 @@ export default function AdminSubjectsPage() {
                         onChange={(e) => setSubIsActive(e.target.checked)}
                         className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4"
                       />
-                      <label htmlFor="subActiveCheck" className="text-xs text-slate-700 font-medium">
+                      <label htmlFor="subActiveCheck" className="text-xs text-slate-700 dark:text-slate-300 font-medium">
                         Active (Visible to Students)
                       </label>
                     </div>
@@ -992,21 +992,21 @@ export default function AdminSubjectsPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700">Description</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Description</label>
                   <textarea
                     rows={3}
                     value={subDesc}
                     onChange={(e) => setSubDesc(e.target.value)}
                     placeholder="Provide curriculum scope and objectives..."
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-white/[0.06]">
                 <button
                   onClick={() => setShowSubjectModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06]"
                 >
                   Cancel
                 </button>
@@ -1024,31 +1024,31 @@ export default function AdminSubjectsPage() {
 
         {/* ================= MODAL: ADD / EDIT LESSON ================= */}
         {showLessonModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-            <div className="w-full max-w-xl rounded-3xl bg-white p-6 sm:p-7 shadow-xl space-y-4">
-              <h3 className="text-lg font-bold text-slate-900">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs p-4">
+            <div className="w-full max-w-xl rounded-3xl bg-white dark:bg-[#0B1124] p-6 sm:p-7 shadow-xl space-y-4 border border-slate-100 dark:border-white/[0.08]">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingLesson ? "Edit Module / Lesson" : "Create New Module / Lesson"}
               </h3>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="font-bold text-slate-700">Module Title</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Module Title</label>
                   <input
                     type="text"
                     value={lesTitle}
                     onChange={(e) => setLesTitle(e.target.value)}
                     placeholder="e.g. Asynchronous Programming & Promises"
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="font-bold text-slate-700">Difficulty</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Difficulty</label>
                     <select
                       value={lesDifficulty}
                       onChange={(e) => setLesDifficulty(e.target.value)}
-                      className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                      className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                     >
                       <option value="EASY">Easy</option>
                       <option value="MEDIUM">Medium</option>
@@ -1057,17 +1057,17 @@ export default function AdminSubjectsPage() {
                   </div>
 
                   <div>
-                    <label className="font-bold text-slate-700">Duration (mins)</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Duration (mins)</label>
                     <input
                       type="number"
                       value={lesDuration}
                       onChange={(e) => setLesDuration(Number(e.target.value))}
-                      className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                      className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="font-bold text-slate-700">Active Status</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Active Status</label>
                     <div className="mt-2 flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -1076,7 +1076,7 @@ export default function AdminSubjectsPage() {
                         onChange={(e) => setLesIsActive(e.target.checked)}
                         className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4"
                       />
-                      <label htmlFor="lesActiveCheck" className="text-xs text-slate-700 font-medium">
+                      <label htmlFor="lesActiveCheck" className="text-xs text-slate-700 dark:text-slate-300 font-medium">
                         Active
                       </label>
                     </div>
@@ -1084,32 +1084,32 @@ export default function AdminSubjectsPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700">Short Summary</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Short Summary</label>
                   <input
                     type="text"
                     value={lesShortDesc}
                     onChange={(e) => setLesShortDesc(e.target.value)}
                     placeholder="One-line summary shown in syllabus..."
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700">Lesson Markdown Content</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Lesson Markdown Content</label>
                   <textarea
                     rows={6}
                     value={lesContent}
                     onChange={(e) => setLesContent(e.target.value)}
                     placeholder="Enter comprehensive markdown notes, headers, and code snippets..."
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 font-mono text-xs focus:border-brand-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 font-mono text-xs focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-white/[0.06]">
                 <button
                   onClick={() => setShowLessonModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06]"
                 >
                   Cancel
                 </button>
@@ -1127,31 +1127,31 @@ export default function AdminSubjectsPage() {
 
         {/* ================= MODAL: ADD / EDIT TOPIC ================= */}
         {showTopicModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-            <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl space-y-4">
-              <h3 className="text-lg font-bold text-slate-900">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs p-4">
+            <div className="w-full max-w-md rounded-3xl bg-white dark:bg-[#0B1124] p-6 shadow-xl space-y-4 border border-slate-100 dark:border-white/[0.08]">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingTopic ? "Edit Child Topic" : "Add Topic Under Module"}
               </h3>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="font-bold text-slate-700">Topic Name</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Topic Name</label>
                   <input
                     type="text"
                     value={topName}
                     onChange={(e) => setTopName(e.target.value)}
                     placeholder="e.g. Event Loop & Microtasks"
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-slate-700">Difficulty</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Difficulty</label>
                     <select
                       value={topDifficulty}
                       onChange={(e) => setTopDifficulty(e.target.value)}
-                      className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                      className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                     >
                       <option value="EASY">Easy</option>
                       <option value="MEDIUM">Medium</option>
@@ -1160,7 +1160,7 @@ export default function AdminSubjectsPage() {
                   </div>
 
                   <div>
-                    <label className="font-bold text-slate-700">Status</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Status</label>
                     <div className="mt-2 flex items-center gap-2">
                       <input
                         type="checkbox"
@@ -1169,7 +1169,7 @@ export default function AdminSubjectsPage() {
                         onChange={(e) => setTopIsActive(e.target.checked)}
                         className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 h-4 w-4"
                       />
-                      <label htmlFor="topActiveCheck" className="text-xs text-slate-700 font-medium">
+                      <label htmlFor="topActiveCheck" className="text-xs text-slate-700 dark:text-slate-300 font-medium">
                         Active
                       </label>
                     </div>
@@ -1177,21 +1177,21 @@ export default function AdminSubjectsPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700">Description</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Description</label>
                   <textarea
                     rows={3}
                     value={topDesc}
                     onChange={(e) => setTopDesc(e.target.value)}
                     placeholder="Core concept definition..."
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-white/[0.06]">
                 <button
                   onClick={() => setShowTopicModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06]"
                 >
                   Cancel
                 </button>
@@ -1209,40 +1209,40 @@ export default function AdminSubjectsPage() {
 
         {/* ================= MODAL: ADD / EDIT STUDY RESOURCE ================= */}
         {showResourceModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-            <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl space-y-4">
-              <h3 className="text-lg font-bold text-slate-900">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 dark:bg-black/60 backdrop-blur-xs p-4">
+            <div className="w-full max-w-lg rounded-3xl bg-white dark:bg-[#0B1124] p-6 shadow-xl space-y-4 border border-slate-100 dark:border-white/[0.08]">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingResource ? "Edit Study Resource" : "Attach Verified Study Resource"}
               </h3>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="font-bold text-slate-700">Resource Title</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Resource Title</label>
                   <input
                     type="text"
                     value={resTitle}
                     onChange={(e) => setResTitle(e.target.value)}
                     placeholder="e.g. MDN Web Docs: Asynchronous JavaScript"
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700">External URL</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">External URL</label>
                   <div className="mt-1 flex items-center gap-2">
                     <input
                       type="url"
                       value={resUrl}
                       onChange={(e) => setResUrl(e.target.value)}
                       placeholder="https://developer.mozilla.org/..."
-                      className="w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                      className="w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                     />
                     {resUrl && (
                       <a
                         href={resUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-slate-600 hover:bg-slate-100"
+                        className="rounded-xl border border-slate-200 dark:border-white/[0.08] bg-slate-50 dark:bg-white/[0.04] p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.08]"
                         title="Test Link"
                       >
                         <ExternalLink className="h-4 w-4" />
@@ -1253,11 +1253,11 @@ export default function AdminSubjectsPage() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-bold text-slate-700">Resource Type</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Resource Type</label>
                     <select
                       value={resType}
                       onChange={(e) => setResType(e.target.value)}
-                      className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                      className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                     >
                       <option value="DOCUMENTATION">Documentation</option>
                       <option value="TUTORIAL">Tutorial</option>
@@ -1269,13 +1269,13 @@ export default function AdminSubjectsPage() {
                   </div>
 
                   <div>
-                    <label className="font-bold text-slate-700">Provider Name</label>
+                    <label className="font-bold text-slate-700 dark:text-slate-300">Provider Name</label>
                     <input
                       type="text"
                       value={resProvider}
                       onChange={(e) => setResProvider(e.target.value)}
                       placeholder="e.g. MDN, W3Schools, Python Docs..."
-                      className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                      className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1297,7 +1297,7 @@ export default function AdminSubjectsPage() {
                       key={p}
                       type="button"
                       onClick={() => setResProvider(p)}
-                      className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600 hover:bg-brand-50 hover:text-brand-700"
+                      className="rounded bg-slate-100 dark:bg-white/[0.06] px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:text-slate-300 hover:bg-brand-50 dark:hover:bg-cyan-900/20 hover:text-brand-700 dark:hover:text-cyan-300"
                     >
                       {p}
                     </button>
@@ -1305,21 +1305,21 @@ export default function AdminSubjectsPage() {
                 </div>
 
                 <div>
-                  <label className="font-bold text-slate-700">Description</label>
+                  <label className="font-bold text-slate-700 dark:text-slate-300">Description</label>
                   <textarea
                     rows={2}
                     value={resDesc}
                     onChange={(e) => setResDesc(e.target.value)}
                     placeholder="Brief description of what this resource covers..."
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-2.5 focus:border-brand-500 focus:outline-none"
+                    className="mt-1 w-full rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.06] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 p-2.5 focus:border-brand-500 dark:focus:border-cyan-500 focus:outline-none"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-white/[0.06]">
                 <button
                   onClick={() => setShowResourceModal(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06]"
                 >
                   Cancel
                 </button>

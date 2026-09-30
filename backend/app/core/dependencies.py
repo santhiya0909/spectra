@@ -56,6 +56,30 @@ def get_current_user(
 
     return user
 
+def get_optional_current_user(
+    auth_credentials: Optional[HTTPAuthorizationCredentials] = Depends(security_scheme),
+    db: Session = Depends(get_db)
+) -> Optional[User]:
+    """Extract and validate the currently authenticated user if token present, else None."""
+    if not auth_credentials or not auth_credentials.credentials:
+        return None
+
+    token = auth_credentials.credentials
+    payload = decode_access_token(token)
+    if not payload:
+        return None
+
+    user_id_str = payload.get("sub")
+    if not user_id_str:
+        return None
+
+    try:
+        user_id = int(user_id_str)
+    except ValueError:
+        return None
+
+    return db.query(User).filter(User.id == user_id).first()
+
 def require_role(allowed_roles: List[str]):
     """RBAC dependency ensuring the user has one of the allowed roles."""
     def role_checker(current_user: User = Depends(get_current_user)) -> User:
@@ -103,3 +127,5 @@ def get_current_teacher(
         db.commit()
         db.refresh(profile)
     return profile
+
+require_admin = require_role(["ADMIN"])

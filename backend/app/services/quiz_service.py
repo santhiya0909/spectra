@@ -210,6 +210,80 @@ def submit_quiz_attempt(
             correct_count=tally["correct"]
         )
 
+    # Gamification & XP Rules (Requirement 28)
+    # Lesson quiz passed: +25 XP
+    # Perfect quiz: +15 bonus XP
+    # Do not allow XP farming through repeated identical submissions
+    from app.db.models.user import StudentProfile
+    from app.db.models.academic import LessonProgress
+
+    xp_earned = 0
+    student = db.query(StudentProfile).filter(StudentProfile.id == student_id).first()
+
+    if percentage >= 70.0:
+        prior_passed = db.query(QuizAttempt).filter(
+            QuizAttempt.student_id == student_id,
+            QuizAttempt.quiz_id == quiz.id,
+            QuizAttempt.percentage >= 70.0,
+            QuizAttempt.id != attempt.id
+        ).first()
+        if not prior_passed:
+            xp_earned += 25  # Passed quiz
+
+    is_perfect = (percentage == 100.0)
+    if is_perfect:
+        prior_perfect = db.query(QuizAttempt).filter(
+            QuizAttempt.student_id == student_id,
+            QuizAttempt.quiz_id == quiz.id,
+            QuizAttempt.percentage >= 100.0,
+            QuizAttempt.id != attempt.id
+        ).first()
+        if not prior_perfect:
+            xp_earned += 15  # Perfect quiz bonus
+
+    if student and xp_earned > 0:
+        student.xp = (student.xp or 0) + xp_earned
+        student.last_active_date = datetime.now(timezone.utc)
+
+    # Sync with LessonProgress if this quiz is tied to a lesson
+    if quiz.lesson_id:
+        prog = db.query(LessonProgress).filter(
+            LessonProgress.student_id == student_id,
+            LessonProgress.lesson_id == quiz.lesson_id
+        ).first()
+
+        now = datetime.now(timezone.utc)
+        if not prog:
+            prog = LessonProgress(
+                student_id=student_id,
+                lesson_id=quiz.lesson_id,
+                status="IN_PROGRESS",
+                completion_percentage=30.0 if percentage >= 70.0 else 10.0,
+                quiz_completed=(percentage >= 70.0),
+                quiz_score=percentage
+            )
+            db.add(prog)
+        else:
+            if percentage >= 70.0:
+                prog.quiz_completed = True
+            prog.quiz_score = max(prog.quiz_score or 0.0, percentage)
+            topic_pct = 40.0 if (prog.topics_completed or 0) > 0 else 20.0
+            puzzle_pct = 20.0 if (prog.puzzles_completed or 0) > 0 else 0.0
+            quiz_pct = 30.0 if prog.quiz_completed else 0.0
+            practice_pct = 10.0 if (prog.completion_percentage or 0) >= 60.0 else 0.0
+            calc_pct = min(100.0, round(topic_pct + puzzle_pct + quiz_pct + practice_pct, 1))
+            prog.completion_percentage = max(prog.completion_percentage or 0.0, calc_pct)
+
+            if prog.completion_percentage >= 95.0 or (prog.quiz_completed and (prog.puzzles_completed or 0) >= 1):
+                if prog.status != "COMPLETED":
+                    prog.status = "COMPLETED"
+                    prog.completed_at = now
+                    if student:
+                        student.xp = (student.xp or 0) + 30
+                        xp_earned += 30
+
+    db.commit()
+
     # Detect Knowledge Gaps & Trigger Recommendations
     gap_data = detect_knowledge_gaps(db, student_id)
     weak_topic_names = [w["topic_name"] for w in gap_data["weak_topics"]]
@@ -228,6 +302,8 @@ def submit_quiz_attempt(
         total_questions=total_questions,
         percentage=percentage,
         status=status_str,
+        xp_earned=xp_earned,
+        is_perfect=is_perfect,
         questions_review=questions_review,
         weak_topics=weak_topic_names,
         recommendations_generated=rec_titles

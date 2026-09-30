@@ -53,4 +53,5 @@ export const teacherService = {
   getAlerts: () => api.get<TeacherAlert[]>("/api/teacher/alerts"),
   updateAlertStatus: (alertId: number, status: "ACTIVE" | "REVIEWED" | "RESOLVED") =>
     api.patch<TeacherAlert>(`/api/teacher/alerts/${alertId}`, { status }),
+  getDetailedAnalytics: () => api.get<any>("/api/teacher/analytics/detailed"),
 };

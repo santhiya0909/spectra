@@ -36,7 +36,7 @@ export default function StudentDetailInspectPage() {
       <div className="mx-auto max-w-4xl space-y-6">
         <Link
           href="/teacher/students"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" />
           <span>Back to Students Roster</span>
@@ -44,20 +44,20 @@ export default function StudentDetailInspectPage() {
 
         {isLoading ? (
           <div className="flex h-96 items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-brand-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-brand-600 dark:text-cyan-400" />
           </div>
         ) : data && data.student ? (
           <div className="space-y-6">
             {/* Student Header Card */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-6 sm:p-8 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-xl font-black text-brand-700">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 dark:bg-cyan-900/20 text-xl font-black text-brand-700 dark:text-cyan-300">
                     {data.student.name.charAt(0)}
                   </div>
                   <div>
-                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900">{data.student.name}</h1>
-                    <p className="text-xs text-slate-500">{data.student.email}</p>
+                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{data.student.name}</h1>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{data.student.email}</p>
                     <p className="text-xs text-slate-400 mt-1">
                       {data.student.student_id} &bull; {data.student.department} &bull; Semester {data.student.semester}
                     </p>
@@ -67,21 +67,20 @@ export default function StudentDetailInspectPage() {
             </div>
 
             {/* Topic Mastery Profile */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-4">Topic Mastery Diagnosed by SPECTRA</h3>
+            <div className="rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-6 shadow-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white mb-4">Topic Mastery Diagnosed by SPECTRA</h3>
               <div className="space-y-3">
                 {data.topic_performances?.map((tp: any) => (
                   <div
                     key={tp.topic_id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/50 p-4"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-slate-100 dark:border-white/[0.05] bg-slate-50/50 dark:bg-white/[0.02] p-4"
                   >
                     <div>
-                      <h4 className="text-sm font-bold text-slate-900">{tp.topic_name}</h4>
-                      <p className="text-xs text-slate-500">
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">{tp.topic_name}</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         Accuracy: {tp.accuracy}% &bull; Attempts: {tp.attempts}
                       </p>
                     </div>
-
                     <div className="flex items-center gap-4">
                       <div className="w-32">
                         <ProgressBar progress={tp.mastery_score} size="sm" color={tp.mastery_score >= 70 ? "emerald" : tp.mastery_score >= 50 ? "amber" : "rose"} />
@@ -96,16 +95,16 @@ export default function StudentDetailInspectPage() {
             </div>
 
             {/* Assessment History */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-4">Assessment History</h3>
+            <div className="rounded-3xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-6 shadow-sm">
+              <h3 className="font-bold text-slate-900 dark:text-white mb-4">Assessment History</h3>
               {data.recent_attempts && data.recent_attempts.length > 0 ? (
                 <div className="space-y-2.5">
                   {data.recent_attempts.map((att: any) => (
                     <div
                       key={att.attempt_id}
-                      className="flex items-center justify-between rounded-xl border border-slate-100 p-3 text-xs"
+                      className="flex items-center justify-between rounded-xl border border-slate-100 dark:border-white/[0.05] p-3 text-xs"
                     >
-                      <span className="font-semibold text-slate-900">{att.quiz_title}</span>
+                      <span className="font-semibold text-slate-900 dark:text-white">{att.quiz_title}</span>
                       <div className="flex items-center gap-3">
                         <span className="text-slate-400">{att.completed_at ? new Date(att.completed_at).toLocaleDateString() : ""}</span>
                         <Badge variant={att.percentage >= 70 ? "emerald" : att.percentage >= 50 ? "amber" : "rose"} size="sm">
@@ -121,7 +120,7 @@ export default function StudentDetailInspectPage() {
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
+          <div className="rounded-2xl border border-dashed border-slate-300 dark:border-white/10 p-8 text-center text-slate-500 dark:text-slate-400">
             Student details not available.
           </div>
         )}

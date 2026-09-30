@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 from datetime import datetime
 
@@ -14,8 +14,7 @@ class TeacherAlertOut(BaseModel):
     status: str      # ACTIVE, REVIEWED, RESOLVED
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class AlertUpdate(BaseModel):
     status: str  # ACTIVE, REVIEWED, RESOLVED

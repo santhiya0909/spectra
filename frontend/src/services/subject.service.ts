@@ -1,5 +1,23 @@
 import { api } from "@/lib/api";
 
+export interface YouTubeVideoRecommendation {
+  video_id: string;
+  title: string;
+  thumbnail_url: string;
+  channel_name: string;
+  duration?: string | null;
+  description?: string | null;
+  url: string;
+  published_at?: string | null;
+}
+
+export interface LessonYouTubeResponse {
+  lesson_id: number;
+  lesson_title?: string | null;
+  query_used?: string | null;
+  videos: YouTubeVideoRecommendation[];
+}
+
 export interface StudyResource {
   id: number;
   lesson_id: number;
@@ -69,6 +87,12 @@ export interface Subject {
   topics?: Topic[];
   lessons?: Lesson[];
   lessons_count: number;
+  completed_lessons_count?: number;
+  current_lesson?: {
+    id: number;
+    title: string;
+    order?: number;
+  } | null;
   quizzes_count: number;
   progress_percentage: number;
   created_at?: string;
@@ -110,4 +134,6 @@ export const subjectService = {
       status,
       completion_percentage,
     }),
+  getLessonYouTubeRecommendations: (lessonId: number) =>
+    api.get<LessonYouTubeResponse>(`/api/lessons/${lessonId}/youtube`),
 };

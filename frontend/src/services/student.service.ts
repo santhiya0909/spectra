@@ -13,6 +13,41 @@ export interface StudentDashboardData {
   lessons_completed: number;
   total_lessons: number;
   current_streak: number;
+  xp?: number;
+  puzzles_solved?: number;
+  topics_mastered?: number;
+  continue_learning_card?: {
+    subject_id?: number;
+    subject_name: string;
+    subject_code?: string;
+    lesson_id: number;
+    lesson_title: string;
+    progress?: number;
+    progress_percentage?: number;
+    next_action?: string;
+    lesson_order?: number;
+  };
+  today_learning_path?: Array<{
+    id?: number;
+    step?: number;
+    resource_id?: number;
+    title: string;
+    type: string;
+    status?: string;
+    completed?: boolean;
+    xp_reward?: number;
+    duration_minutes?: number;
+    url?: string;
+    is_current?: boolean;
+  }>;
+  recent_achievements?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    earned_at: string;
+    xp: number;
+  }>;
   weak_topics: Array<{
     topic_id: number;
     topic_name: string;
@@ -45,6 +80,10 @@ export interface StudentDashboardData {
     completed_lessons: number;
     total_lessons: number;
     percentage: number;
+    current_lesson?: {
+      id: number;
+      title: string;
+    } | null;
   }>;
   today_learning_plan: Array<{
     id: number;

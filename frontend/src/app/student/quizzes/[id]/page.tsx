@@ -6,7 +6,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { quizService, Question, QuizResult } from "@/services/quiz.service";
 import { RoleLayout } from "@/components/layout/RoleLayout";
-import { Badge } from "@/components/common/Badge";
 import {
   ArrowLeft,
   ArrowRight,
@@ -16,7 +15,10 @@ import {
   Loader2,
   Sparkles,
   Send,
-  HelpCircle
+  HelpCircle,
+  Check,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 
 export default function ActiveQuizPage() {
@@ -24,7 +26,6 @@ export default function ActiveQuizPage() {
   const router = useRouter();
   const quizId = Number(params?.id);
 
-  // Fetch quiz questions
   const { data: questions, isLoading, error } = useQuery<Question[]>({
     queryKey: ["activeQuiz", quizId],
     queryFn: () => quizService.startQuiz(quizId),
@@ -36,7 +37,6 @@ export default function ActiveQuizPage() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  // Timer
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeElapsed((prev) => prev + 1);
@@ -75,8 +75,8 @@ export default function ActiveQuizPage() {
     return (
       <RoleLayout allowedRoles={["STUDENT", "ADMIN"]}>
         <div className="flex h-96 flex-col items-center justify-center gap-3">
-          <Loader2 className="h-8 w-8 animate-spin text-brand-600" />
-          <p className="text-sm font-medium text-slate-500">Preparing adaptive diagnostic questions...</p>
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-600 dark:text-indigo-400" />
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Preparing adaptive diagnostic questions...</p>
         </div>
       </RoleLayout>
     );
@@ -85,13 +85,13 @@ export default function ActiveQuizPage() {
   if (error || !questions || questions.length === 0) {
     return (
       <RoleLayout allowedRoles={["STUDENT", "ADMIN"]}>
-        <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center text-rose-700">
-          <AlertCircle className="h-8 w-8 mx-auto mb-2 text-rose-600" />
-          <h3 className="font-bold">Unable to load quiz assessment</h3>
-          <p className="text-xs mt-1">Please try again or select another quiz.</p>
+        <div className="rounded-3xl border border-rose-200 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-950/20 p-8 text-center text-rose-700 dark:text-rose-300 max-w-lg mx-auto mt-12">
+          <AlertCircle className="h-10 w-10 mx-auto mb-3 text-rose-600 dark:text-rose-400" />
+          <h3 className="font-bold text-base">Unable to load quiz assessment</h3>
+          <p className="text-xs mt-1 text-slate-600 dark:text-slate-400">Please try again or select another quiz from your curriculum.</p>
           <Link
             href="/student/quizzes"
-            className="mt-4 inline-block rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white"
+            className="mt-5 inline-block rounded-xl bg-slate-900 dark:bg-white dark:text-slate-900 px-5 py-2.5 text-xs font-bold text-white shadow-sm"
           >
             Back to Quizzes
           </Link>
@@ -102,52 +102,82 @@ export default function ActiveQuizPage() {
 
   const currentQ = questions[currentIndex];
   const totalQ = questions.length;
-  const answeredCount = Object.keys(selectedAnswers).length;
+  const answeredCount = Object.keys(selectedAnswers).filter(k => Boolean(selectedAnswers[Number(k)])).length;
+  const isAnswered = Boolean(selectedAnswers[currentQ?.id]);
+  const isLastQuestion = currentIndex === totalQ - 1;
+
+  let optionsList: string[] = [];
+  if (currentQ) {
+    if (Array.isArray(currentQ.options)) {
+      optionsList = currentQ.options;
+    } else if (typeof currentQ.options === "string") {
+      try {
+        optionsList = JSON.parse(currentQ.options);
+      } catch {
+        optionsList = [];
+      }
+    }
+  }
 
   return (
     <RoleLayout allowedRoles={["STUDENT", "ADMIN"]}>
-      <div className="mx-auto max-w-3xl space-y-6">
-        {/* Top Status Bar */}
-        <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-5 py-3.5 shadow-sm">
-          <Link
-            href="/student/quizzes"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>Exit</span>
-          </Link>
+      <div className="mx-auto max-w-3xl space-y-6 pb-20">
+        {/* Top Sticky Bar */}
+        <div className="rounded-3xl border border-slate-200/90 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-4 sm:p-5 shadow-sm space-y-3">
+          <div className="flex items-center justify-between">
+            <Link
+              href="/student/quizzes"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Quit Assessment</span>
+            </Link>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg">
-              <Clock className="h-3.5 w-3.5 text-slate-500" />
+            {/* Timer */}
+            <div className="inline-flex items-center gap-2 rounded-xl bg-slate-100 dark:bg-white/[0.06] px-3 py-1.5 text-xs font-mono font-bold text-slate-700 dark:text-slate-200">
+              <Clock className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               <span>{formatTime(timeElapsed)}</span>
             </div>
 
-            <button
-              onClick={() => setShowConfirmModal(true)}
-              className="rounded-xl bg-brand-600 px-4 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-brand-700 transition"
-            >
-              Finish & Submit
-            </button>
+            {/* XP Bonus Indicator */}
+            <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-500/25 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-400">
+              <Sparkles className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
+              <span>+25 XP Pass &bull; +15 XP Perfect</span>
+            </div>
+          </div>
+
+          {/* Progress Bar & Counter */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300">
+              <span>Question {currentIndex + 1} of {totalQ}</span>
+              <span className="text-indigo-600 dark:text-indigo-400">{answeredCount} of {totalQ} answered</span>
+            </div>
+            <div className="w-full h-2 bg-slate-100 dark:bg-white/[0.08] rounded-full overflow-hidden">
+              <div
+                className="h-full bg-indigo-600 rounded-full transition-all duration-300"
+                style={{ width: `${((currentIndex + 1) / totalQ) * 100}%` }}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Question Navigation Bubbles */}
-        <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-sm">
+        {/* Question Navigator Pills */}
+        <div className="flex flex-wrap items-center gap-2 px-1">
           {questions.map((q, idx) => {
-            const isAnswered = !!selectedAnswers[q.id];
-            const isCurrent = idx === currentIndex;
+            const hasAnswer = Boolean(selectedAnswers[q.id]);
+            const isCurr = idx === currentIndex;
 
             return (
               <button
                 key={q.id}
+                type="button"
                 onClick={() => setCurrentIndex(idx)}
-                className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold transition ${
-                  isCurrent
-                    ? "bg-brand-600 text-white shadow"
-                    : isAnswered
-                    ? "bg-brand-100 text-brand-800 border border-brand-200"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                className={`w-8 h-8 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${
+                  isCurr
+                    ? "bg-indigo-600 text-white ring-2 ring-indigo-500/20 shadow-sm"
+                    : hasAnswer
+                    ? "bg-emerald-100 dark:bg-emerald-900/25 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30"
+                    : "bg-white dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/[0.08]"
                 }`}
               >
                 {idx + 1}
@@ -156,82 +186,89 @@ export default function ActiveQuizPage() {
           })}
         </div>
 
-        {/* Question Card */}
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Question {currentIndex + 1} of {totalQ} &bull; {currentQ.topic_name}
+        {/* Main Question Card */}
+        <div className="rounded-3xl border border-slate-200/90 dark:border-white/[0.08] bg-white dark:bg-[#0B1124]/85 p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-900/25 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-500/25">
+              Multiple Choice
             </span>
-            <Badge
-              variant={currentQ.difficulty === "EASY" ? "emerald" : currentQ.difficulty === "MEDIUM" ? "brand" : "purple"}
-              size="sm"
-            >
-              {currentQ.difficulty}
-            </Badge>
+            <span className="text-xs font-semibold text-slate-400">
+              Difficulty: {currentQ?.difficulty || "MEDIUM"}
+            </span>
           </div>
 
-          <h2 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
-            {currentQ.question_text}
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-snug">
+            {currentQ?.question_text}
           </h2>
 
           {/* Options */}
-          <div className="mt-6 space-y-3">
-            {currentQ.options.map((option, optIdx) => {
-              const isSelected = selectedAnswers[currentQ.id] === option;
+          <div className="space-y-3 pt-2">
+            {optionsList.map((opt, optIdx) => {
+              const isSelected = selectedAnswers[currentQ.id] === opt;
+              const optionLetter = String.fromCharCode(65 + optIdx);
 
               return (
-                <div
+                <button
                   key={optIdx}
-                  onClick={() => handleSelectOption(currentQ.id, option)}
-                  className={`flex items-center gap-3 rounded-2xl border p-4 cursor-pointer transition ${
+                  type="button"
+                  onClick={() => handleSelectOption(currentQ.id, opt)}
+                  className={`w-full text-left p-4 rounded-2xl border text-sm font-medium transition-all flex items-center justify-between ${
                     isSelected
-                      ? "border-brand-500 bg-brand-50/70 shadow-sm"
-                      : "border-slate-200 bg-white hover:bg-slate-50 hover:border-slate-300"
+                      ? "border-indigo-600 dark:border-indigo-500 bg-indigo-50/70 dark:bg-indigo-900/25 text-indigo-950 dark:text-indigo-100 ring-2 ring-indigo-500/20 shadow-sm"
+                      : "border-slate-200/90 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-white/[0.04] text-slate-700 dark:text-slate-200 bg-white dark:bg-transparent"
                   }`}
                 >
-                  <div
-                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-xs font-bold ${
+                  <div className="flex items-center gap-3.5 flex-1 pr-3">
+                    <span className={`w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center shrink-0 border ${
                       isSelected
-                        ? "border-brand-600 bg-brand-600 text-white"
-                        : "border-slate-300 bg-white text-slate-500"
-                    }`}
-                  >
-                    {isSelected && <CheckCircle2 className="h-3.5 w-3.5" />}
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/[0.08]"
+                    }`}>
+                      {optionLetter}
+                    </span>
+                    <span className="leading-relaxed">{opt}</span>
                   </div>
-                  <span className={`text-sm ${isSelected ? "font-semibold text-brand-900" : "text-slate-700"}`}>
-                    {option}
-                  </span>
-                </div>
+                  {isSelected && (
+                    <div className="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    </div>
+                  )}
+                </button>
               );
             })}
           </div>
+        </div>
 
-          {/* Bottom Nav inside Question */}
-          <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-5">
-            <button
-              onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
-              disabled={currentIndex === 0}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Previous</span>
-            </button>
+        {/* Bottom Navigation Buttons */}
+        <div className="flex items-center justify-between pt-2">
+          <button
+            type="button"
+            disabled={currentIndex === 0}
+            onClick={() => setCurrentIndex((prev) => prev - 1)}
+            className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-white/[0.08] bg-white dark:bg-white/[0.04] hover:bg-slate-50 dark:hover:bg-white/[0.08] text-slate-700 dark:text-slate-300 text-xs font-bold shadow-sm transition-all disabled:opacity-40 disabled:pointer-events-none flex items-center gap-2"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span>Previous</span>
+          </button>
 
-            {currentIndex < totalQ - 1 ? (
+          <div className="flex items-center gap-3">
+            {isLastQuestion ? (
               <button
-                onClick={() => setCurrentIndex((prev) => Math.min(totalQ - 1, prev + 1))}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+                type="button"
+                onClick={() => setShowConfirmModal(true)}
+                className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-200 dark:shadow-emerald-950/40 transition-all flex items-center gap-2"
               >
-                <span>Next Question</span>
-                <ArrowRight className="h-3.5 w-3.5" />
+                <Send className="w-4 h-4" />
+                <span>Submit Quiz</span>
               </button>
             ) : (
               <button
-                onClick={() => setShowConfirmModal(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-brand-600 px-5 py-2 text-xs font-bold text-white shadow hover:bg-brand-700"
+                type="button"
+                onClick={() => setCurrentIndex((prev) => prev + 1)}
+                className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-200 dark:shadow-indigo-950/40 transition-all flex items-center gap-2"
               >
-                <Send className="h-3.5 w-3.5" />
-                <span>Submit Assessment</span>
+                <span>Next Question</span>
+                <ChevronRight className="w-4 h-4" />
               </button>
             )}
           </div>
@@ -239,44 +276,40 @@ export default function ActiveQuizPage() {
 
         {/* Submit Confirmation Modal */}
         {showConfirmModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-            <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl border border-slate-200">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 mb-4">
-                <Send className="h-6 w-6" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+            <div className="bg-white dark:bg-[#0B1124] rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 dark:border-white/[0.08] text-center space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/25 border border-indigo-100 dark:border-indigo-500/25 text-indigo-600 dark:text-indigo-400 mx-auto flex items-center justify-center">
+                <HelpCircle className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">Submit Quiz Assessment?</h3>
-              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                You have answered <span className="font-bold text-slate-900">{answeredCount}</span> of{" "}
-                <span className="font-bold text-slate-900">{totalQ}</span> questions.
-                {answeredCount < totalQ && (
-                  <span className="block text-amber-600 font-semibold mt-1">
-                    Warning: You have {totalQ - answeredCount} unanswered questions!
-                  </span>
-                )}
-              </p>
-
-              <div className="mt-6 flex items-center justify-end gap-3">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Ready to Submit?</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  You have answered {answeredCount} of {totalQ} questions.
+                  {answeredCount < totalQ && (
+                    <span className="block text-amber-600 dark:text-amber-400 font-semibold mt-1">
+                      Warning: {totalQ - answeredCount} questions are still unanswered!
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div className="flex items-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowConfirmModal(false)}
-                  disabled={submitMutation.isPending}
-                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                  className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-50 dark:hover:bg-white/[0.06]"
                 >
-                  Return to Quiz
+                  Review
                 </button>
                 <button
                   type="button"
-                  onClick={() => submitMutation.mutate()}
                   disabled={submitMutation.isPending}
-                  className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-5 py-2 text-xs font-bold text-white shadow hover:bg-brand-700 disabled:opacity-50"
+                  onClick={() => submitMutation.mutate()}
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-200 dark:shadow-emerald-950/40 flex items-center justify-center gap-1.5"
                 >
                   {submitMutation.isPending ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Grading & Analyzing...</span>
-                    </>
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <span>Confirm & Submit</span>
+                    <span>Confirm & Grade</span>
                   )}
                 </button>
               </div>

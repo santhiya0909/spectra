@@ -88,8 +88,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem("spectra_token", res.access_token);
       setToken(res.access_token);
 
-      // Fetch user profile
-      const userData = await api.get<User>("/api/auth/me");
+      // Fetch user profile with explicit auth header
+      const userData = await api.get<User>("/api/auth/me", {
+        headers: { Authorization: `Bearer ${res.access_token}` },
+      });
       setUser(userData);
       localStorage.setItem("spectra_user", JSON.stringify(userData));
 
@@ -113,7 +115,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem("spectra_token", res.access_token);
       setToken(res.access_token);
 
-      const userData = await api.get<User>("/api/auth/me");
+      // Fetch user profile with explicit auth header
+      const userData = await api.get<User>("/api/auth/me", {
+        headers: { Authorization: `Bearer ${res.access_token}` },
+      });
       setUser(userData);
       localStorage.setItem("spectra_user", JSON.stringify(userData));
 

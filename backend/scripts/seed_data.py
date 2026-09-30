@@ -14,6 +14,7 @@ from app.db.models.quiz import Question, Quiz, QuizQuestion, QuizAttempt, QuizRe
 from app.db.models.performance import StudentTopicPerformance
 from app.db.models.recommendation import Recommendation, LearningPlan, LearningPlanItem
 from app.db.models.teacher import TeacherAlert
+from app.db.models.puzzle import Puzzle
 
 def seed_database():
     print("=" * 60)
@@ -145,7 +146,9 @@ def seed_database():
 
         topic_dict = {}
         for subj_data in curriculum:
-            subj = db.query(Subject).filter(Subject.code == subj_data["code"]).first()
+            subj = db.query(Subject).filter(
+                (Subject.code == subj_data["code"]) | (Subject.name == subj_data["name"])
+            ).first()
             if not subj:
                 subj = Subject(name=subj_data["name"], code=subj_data["code"], description=subj_data["description"])
                 db.add(subj)
@@ -652,6 +655,54 @@ In Python, functions are first-class citizens. You can pass them as arguments, r
             ))
 
             db.commit()
+
+        # Guarantee all lessons have at least 1 puzzle and quiz
+        for l in db.query(Lesson).all():
+            has_p = db.query(Puzzle).filter(Puzzle.lesson_id == l.id).first()
+            if not has_p:
+                db.add(Puzzle(
+                    subject_id=l.subject_id,
+                    lesson_id=l.id,
+                    topic_id=l.topic_id,
+                    title=f"Knowledge Check: {l.title}",
+                    description="Interactive concept verification.",
+                    puzzle_type="MULTIPLE_CHOICE",
+                    question=f"Which concept is essential to {l.title}?",
+                    puzzle_data=json.dumps(["Understanding core fundamentals", "Ignoring errors", "Skipping documentation", "Guessing values"]),
+                    correct_answer="Understanding core fundamentals",
+                    explanation="Mastering core fundamentals ensures robust application architecture.",
+                    difficulty=l.difficulty or "EASY",
+                    xp_reward=10
+                ))
+            has_q = db.query(Quiz).filter(Quiz.lesson_id == l.id).first()
+            if not has_q:
+                qz = Quiz(
+                    subject_id=l.subject_id,
+                    lesson_id=l.id,
+                    topic_id=l.topic_id,
+                    title=f"Lesson Quiz: {l.title}",
+                    description="Quiz testing lesson mastery.",
+                    quiz_type="CONCEPTUAL",
+                    difficulty=l.difficulty or "MEDIUM",
+                    question_count=5
+                )
+                db.add(qz)
+                db.flush()
+                for qi in range(5):
+                    q_obj = Question(
+                        subject_id=l.subject_id,
+                        topic_id=l.topic_id,
+                        lesson_id=l.id,
+                        question_text=f"Question {qi+1} on {l.title}: What is a key principle?",
+                        options=json.dumps(["A) Precision and correctness", "B) Ignoring edge cases", "C) Arbitrary execution", "D) None of these"]),
+                        correct_answer="A) Precision and correctness",
+                        explanation="Precision and correctness are critical.",
+                        difficulty=l.difficulty or "EASY"
+                    )
+                    db.add(q_obj)
+                    db.flush()
+                    db.add(QuizQuestion(quiz_id=qz.id, question_id=q_obj.id, order_index=qi + 1))
+        db.commit()
 
         print("[SUCCESS] Database seeding complete!")
         print("  - Student Login: student@example.com (Password: student123)")

@@ -1,6 +1,6 @@
 import os
 from typing import List
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "SPECTRA – Intelligent Educational System"
@@ -26,6 +26,17 @@ class Settings(BaseSettings):
     AI_BASE_URL: str = os.getenv("AI_BASE_URL", "https://api.openai.com/v1")
     AI_MODEL: str = os.getenv("AI_MODEL", "gpt-4o-mini")
     
+    # YouTube Integration (Data API v3)
+    YOUTUBE_API_KEY: str = os.getenv("YOUTUBE_API_KEY", "")
+
+    # ── Social OAuth ─────────────────────────────────────────────────────────
+    # Google: https://console.cloud.google.com/apis/credentials
+    GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "")
+
+    # Facebook: https://developers.facebook.com/apps
+    FACEBOOK_APP_ID: str = os.getenv("FACEBOOK_APP_ID", "")
+    FACEBOOK_APP_SECRET: str = os.getenv("FACEBOOK_APP_SECRET", "")
+    
     # CORS
     CORS_ORIGINS: str = os.getenv(
         "CORS_ORIGINS", 
@@ -36,8 +47,6 @@ class Settings(BaseSettings):
     def cors_origins_list(self) -> List[str]:
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
 
-    class Config:
-        case_sensitive = True
-        extra = "allow"
+    model_config = SettingsConfigDict(case_sensitive=True, extra="allow")
 
 settings = Settings()

@@ -22,6 +22,7 @@ class Subject(Base):
     lessons = relationship("Lesson", back_populates="subject", cascade="all, delete-orphan", order_by="Lesson.lesson_order")
     quizzes = relationship("Quiz", back_populates="subject", cascade="all, delete-orphan")
     enrollments = relationship("Enrollment", back_populates="subject", cascade="all, delete-orphan")
+    puzzles = relationship("Puzzle", back_populates="subject", cascade="all, delete-orphan")
 
 class Lesson(Base):
     __tablename__ = "lessons"
@@ -50,6 +51,10 @@ class Lesson(Base):
     topics = relationship("Topic", back_populates="lesson", foreign_keys="[Topic.lesson_id]", cascade="all, delete-orphan", order_by="Topic.display_order")
     study_resources = relationship("StudyResource", back_populates="lesson", cascade="all, delete-orphan", order_by="StudyResource.display_order")
     progresses = relationship("LessonProgress", back_populates="lesson", cascade="all, delete-orphan")
+    puzzles = relationship("Puzzle", back_populates="lesson", cascade="all, delete-orphan", order_by="Puzzle.display_order")
+    quizzes = relationship("Quiz", back_populates="lesson", cascade="all, delete-orphan")
+    questions = relationship("Question", back_populates="lesson", cascade="all, delete-orphan")
+    youtube_recommendations = relationship("LessonYouTubeVideo", back_populates="lesson", cascade="all, delete-orphan", order_by="LessonYouTubeVideo.rank.asc()")
 
 class Topic(Base):
     __tablename__ = "topics"
@@ -73,6 +78,8 @@ class Topic(Base):
     performances = relationship("StudentTopicPerformance", back_populates="topic", cascade="all, delete-orphan")
     recommendations = relationship("Recommendation", back_populates="topic", cascade="all, delete-orphan")
     teacher_alerts = relationship("TeacherAlert", back_populates="topic", cascade="all, delete-orphan")
+    puzzles = relationship("Puzzle", back_populates="topic", cascade="all, delete-orphan")
+    quizzes = relationship("Quiz", back_populates="topic", cascade="all, delete-orphan")
 
 class StudyResource(Base):
     __tablename__ = "study_resources"
@@ -112,7 +119,42 @@ class LessonProgress(Base):
     lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"), nullable=False, index=True)
     status = Column(String(20), default="NOT_STARTED")  # NOT_STARTED, IN_PROGRESS, COMPLETED
     completion_percentage = Column(Float, default=0.0)
+    topics_completed = Column(Integer, default=0)
+    puzzles_completed = Column(Integer, default=0)
+    quiz_completed = Column(Boolean, default=False)
+    quiz_score = Column(Float, default=0.0)
+    xp_earned = Column(Integer, default=0)
     completed_at = Column(DateTime(timezone=True), nullable=True)
 
     student = relationship("StudentProfile", back_populates="lesson_progresses")
     lesson = relationship("Lesson", back_populates="progresses")
+
+class LessonYouTubeVideo(Base):
+    __tablename__ = "lesson_youtube_videos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    lesson_id = Column(Integer, ForeignKey("lessons.id", ondelete="CASCADE"), nullable=False, index=True)
+    video_id = Column(String(50), nullable=False, index=True)
+    title = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    thumbnail_url = Column(String(500), nullable=True)
+    channel_name = Column(String(150), nullable=True)
+    duration = Column(String(50), nullable=True)
+    url = Column(String(500), nullable=False)
+    published_at = Column(String(50), nullable=True)
+    rank = Column(Integer, default=0, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+    lesson = relationship("Lesson", back_populates="youtube_recommendations")
+
+class TopicPrerequisite(Base):
+    __tablename__ = "topic_prerequisites"
+
+    id = Column(Integer, primary_key=True, index=True)
+    topic_id = Column(Integer, ForeignKey("topics.id", ondelete="CASCADE"), nullable=False, index=True)
+    prerequisite_topic_id = Column(Integer, ForeignKey("topics.id", ondelete="CASCADE"), nullable=False, index=True)
+    description = Column(String(255), nullable=True)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+
+    topic = relationship("Topic", foreign_keys=[topic_id], backref="prerequisite_associations")
+    prerequisite_topic = relationship("Topic", foreign_keys=[prerequisite_topic_id])

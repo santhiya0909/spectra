@@ -114,8 +114,98 @@ class FallbackTutorProvider(BaseTutorProvider):
                 "recommended_topics": [topic_name]
             }
 
+        # Check for specific prompt actions (Requirement 37)
+        lesson_title = context.get("lesson_title")
+        puzzle_info = context.get("recent_puzzle_mistake")
+        quiz_mistake_info = context.get("recent_quiz_mistake")
+        action = context.get("action_type") or ""
+
+        if action == "EXPLAIN_LESSON" or "explain this lesson" in p_lower:
+            target_lesson = lesson_title or f"this lesson on {topic_name}"
+            reply = (
+                f"### 📖 Concept Breakdown: {target_lesson}\n\n"
+                f"In **{subject_name}**, {topic_name} forms an essential foundation. Here is how to think about it:\n\n"
+                "1. **Core Motivation**: Why does this concept exist? It provides modularity, clarity, and predictable execution.\n"
+                "2. **Mental Model**: Visualize the flow of data through memory—from inputs, through transformations, to expected outputs.\n"
+                "3. **Practical Application**: In real-world software, this pattern prevents edge cases and ensures robust error handling.\n\n"
+                "**Pro-Tip**: Read through each code block in the lesson carefully, then try the quick interactive puzzle to test your mental model!"
+            )
+            hints = ["Trace code execution line by line", "Review key syntax declarations"]
+
+        elif action == "HINT" or "give me a hint" in p_lower or "hint" in p_lower:
+            reply = (
+                f"### 💡 Thought Hint for {topic_name}\n\n"
+                "Before jumping to conclusions, consider these clues:\n\n"
+                "- Look closely at the data types and method signatures.\n"
+                "- What are the input constraints and expected return guarantees?\n"
+                "- Eliminate answers that violate fundamental language syntax or type bounds.\n\n"
+                "*Remember: Think about what happens step-by-step rather than guessing.*"
+            )
+            hints = ["Check parameter types and count", "Verify return statements"]
+
+        elif action == "EXPLAIN_PUZZLE" or "explain why my puzzle answer was incorrect" in p_lower:
+            if puzzle_info:
+                p_title = puzzle_info.get("title", "the puzzle")
+                p_q = puzzle_info.get("question", "")
+                p_exp = puzzle_info.get("explanation", "")
+                reply = (
+                    f"### 🧩 Puzzle Feedback: {p_title}\n\n"
+                    f"**Challenge Context**: {p_q}\n\n"
+                    "**Why this common misconception happens**:\n"
+                    "In interactive learning puzzles, common traps usually involve:\n"
+                    "1. Overlooking operator precedence or type conversion nuances.\n"
+                    "2. Confusing pass-by-value with reference mutations.\n"
+                    "3. Off-by-one errors or ordering of execution steps.\n\n"
+                    f"{f'**Key Insight**: {p_exp}' if p_exp else 'Trace the variables through each line of code.'}\n\n"
+                    "Try re-reading the question and testing the logic step-by-step!"
+                )
+            else:
+                reply = (
+                    f"### 🧩 Puzzle Analysis for {topic_name}\n\n"
+                    "When solving code and logic puzzles, common mistakes include:\n"
+                    "- Confusing the order of method invocation with definition.\n"
+                    "- Overlooking return value types.\n"
+                    "- Forgetting that arguments are evaluated before entering function bodies.\n\n"
+                    "Re-trace your steps and give it another try!"
+                )
+            hints = ["Identify the execution entry point", "Track variable values in each step"]
+
+        elif action == "SIMILAR_PRACTICE" or "similar practice problem" in p_lower:
+            reply = (
+                f"### ✍️ Similar Practice Challenge for {topic_name}\n\n"
+                f"Here is a targeted problem to test your understanding:\n\n"
+                "```text\n"
+                "Given a function that takes two integer parameters, (a, b),\n"
+                "what will be the final value returned if a = 4 and b is doubled\n"
+                "inside the function body before returning (a * b)?\n"
+                "```\n\n"
+                "**Question**: Does the original variable `b` in the caller change?\n\n"
+                "Think about pass-by-value and memory scope!"
+            )
+            hints = ["Primitive values are passed by value", "Local reassignments do not affect caller"]
+
+        elif action == "EXPLAIN_QUIZ" or "explain my quiz mistake" in p_lower:
+            if quiz_mistake_info:
+                q_text = quiz_mistake_info.get("question_text", "the question")
+                q_exp = quiz_mistake_info.get("explanation", "Review the concept rules.")
+                reply = (
+                    f"### 📝 Reviewing Your Assessment Question\n\n"
+                    f"**Question**: *\"{q_text}\"*\n\n"
+                    f"**Explanation**: {q_exp}\n\n"
+                    "**Takeaway**: Focus on understanding why the correct option is uniquely true, and why alternative options are invalid syntax or logic."
+                )
+            else:
+                reply = (
+                    f"### 📝 Quiz Mistake Analysis for {topic_name}\n\n"
+                    "Reviewing mistakes is the fastest path to mastery. When you miss a question:\n"
+                    "1. Isolate the specific rule being tested (e.g. method overriding vs overloading).\n"
+                    "2. Check if you fell for a distractor option with subtle syntax errors.\n"
+                    "3. Review the lesson section covering this specific topic."
+                )
+            hints = ["Review topic reference documentation", "Solve 3 practice questions"]
+
         # Context-tailored response
-        if "function" in p_lower or "method" in p_lower:
+        elif "function" in p_lower or "method" in p_lower:
             reply = (
                 f"### 📘 Understanding Functions & Parameters in {subject_name}\n\n"
                 "A **function** is a reusable block of code that takes inputs (arguments), performs an operation, and returns an output.\n\n"
@@ -192,9 +282,16 @@ class AIService:
         conversation_id: Optional[int] = None,
         subject_id: Optional[int] = None,
         topic_id: Optional[int] = None,
+        lesson_id: Optional[int] = None,
+        puzzle_id: Optional[int] = None,
+        action_type: Optional[str] = None,
         is_during_quiz: bool = False
     ) -> AIChatResponse:
         """Processes a student's tutoring question, saving context and responses."""
+        from app.db.models.puzzle import Puzzle, PuzzleAttempt
+        from app.db.models.quiz import QuizResponse, Question
+        from app.db.models.academic import Lesson
+
         # Find or create conversation
         if conversation_id:
             conv = db.query(AIConversation).filter(
@@ -221,13 +318,40 @@ class AIService:
             if t:
                 weak_topic_names.append(t.name)
 
-        subject = db.query(Subject).filter(Subject.id == subject_id).first() if subject_id else None
-        topic = db.query(Topic).filter(Topic.id == topic_id).first() if topic_id else None
+        lesson = db.query(Lesson).filter(Lesson.id == lesson_id).first() if lesson_id else None
+        subject = db.query(Subject).filter(Subject.id == subject_id).first() if subject_id else (lesson.subject if lesson else None)
+        topic = db.query(Topic).filter(Topic.id == topic_id).first() if topic_id else (lesson.topic if lesson else None)
+
+        recent_puzzle_mistake = None
+        if puzzle_id:
+            p = db.query(Puzzle).filter(Puzzle.id == puzzle_id).first()
+            if p:
+                recent_puzzle_mistake = {"id": p.id, "title": p.title, "question": p.question, "explanation": p.explanation}
+        else:
+            last_failed_puzzle = db.query(PuzzleAttempt).filter(
+                PuzzleAttempt.student_id == student_id,
+                PuzzleAttempt.is_correct == False
+            ).order_by(PuzzleAttempt.completed_at.desc()).first()
+            if last_failed_puzzle and last_failed_puzzle.puzzle:
+                p = last_failed_puzzle.puzzle
+                recent_puzzle_mistake = {"id": p.id, "title": p.title, "question": p.question, "explanation": p.explanation}
+
+        recent_quiz_mistake = None
+        last_failed_resp = db.query(QuizResponse).join(Question).filter(
+            QuizResponse.is_correct == False
+        ).order_by(QuizResponse.id.desc()).first()
+        if last_failed_resp and last_failed_resp.question:
+            q = last_failed_resp.question
+            recent_quiz_mistake = {"question_text": q.question_text, "explanation": q.explanation}
 
         context = {
             "subject_name": subject.name if subject else "General Computer Science",
             "topic_name": topic.name if topic else (weak_topic_names[0] if weak_topic_names else "Core Topics"),
-            "weak_topics": weak_topic_names
+            "lesson_title": lesson.title if lesson else None,
+            "weak_topics": weak_topic_names,
+            "recent_puzzle_mistake": recent_puzzle_mistake,
+            "recent_quiz_mistake": recent_quiz_mistake,
+            "action_type": action_type
         }
 
         # Gather history
