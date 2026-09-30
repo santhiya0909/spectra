@@ -396,4 +396,5 @@ To showcase the closed-loop learning engine end-to-end:
    - Sign out and log in with the **"👩‍🏫 Teacher"** demo button (`teacher@example.com` / `teacher123`).
    - The teacher dashboard immediately reflects the student's updated class average and refreshed alert statuses.
 #   s p e c t r a  
+ #   s p e c t r a  
  
