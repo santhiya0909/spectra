@@ -1,4 +1,12 @@
-# SPECTRA – Intelligent Educational System
+Team name : Spectra
+Team details : santhiya GB (8248576800) (santhiyagopi800@gmail.com)
+               Vikash S  (9360644986) (ssrinithi482@gmail.com)
+               Santhosh S  (8939572416) (santhoshhhh2606@gmail.com)
+               kavyadharshini SA  (8148097580) (kavyanimmi2007@gmail.com)
+
+Team Leader : Santhiya GB (8248576800)(santhiyagopi800@gmail.com)
+
+               # SPECTRA – Intelligent Educational System
 
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js%2014-black?logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
@@ -395,6 +403,8 @@ To showcase the closed-loop learning engine end-to-end:
 7. **Step 7 — Inspect Teacher Dashboard**:
    - Sign out and log in with the **"👩‍🏫 Teacher"** demo button (`teacher@example.com` / `teacher123`).
    - The teacher dashboard immediately reflects the student's updated class average and refreshed alert statuses.
-#   s p e c t r a  
- #   s p e c t r a  
+#   s p e c t r a 
+ 
+ #   s p e c t r a 
+ 
  
