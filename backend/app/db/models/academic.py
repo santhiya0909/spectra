@@ -125,6 +125,12 @@ class LessonProgress(Base):
     quiz_score = Column(Float, default=0.0)
     xp_earned = Column(Integer, default=0)
     completed_at = Column(DateTime(timezone=True), nullable=True)
+    last_accessed = Column(
+    DateTime(timezone=True),
+    default=lambda: datetime.now(timezone.utc),
+    nullable=False,
+    index=True
+)
 
     student = relationship("StudentProfile", back_populates="lesson_progresses")
     lesson = relationship("Lesson", back_populates="progresses")
