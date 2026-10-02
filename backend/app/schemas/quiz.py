@@ -55,6 +55,7 @@ class QuizCreate(QuizBase):
 
 class QuizOut(QuizBase):
     id: int
+    quiz_id: Optional[int] = None
     subject_name: Optional[str] = None
     best_score: Optional[float] = None
     attempts_count: Optional[int] = 0

@@ -32,10 +32,7 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-
-// ── Constants read from env ──────────────────────────────────────────────────
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+import { buildApiUrl } from "./api";
 
 /** Public Google OAuth client ID — safe in browser, issued per-app */
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "";
@@ -87,7 +84,7 @@ function openPopup(url: string, title: string): Window | null {
 
 /** Exchange a Google ID token with our backend and receive a SPECTRA JWT */
 async function exchangeGoogleToken(idToken: string): Promise<SpectraToken> {
-  const res = await fetch(`${API_URL}/api/auth/social/google`, {
+  const res = await fetch(buildApiUrl("/api/auth/social/google"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id_token: idToken }),
@@ -101,7 +98,7 @@ async function exchangeGoogleToken(idToken: string): Promise<SpectraToken> {
 
 /** Exchange a Facebook access token with our backend and receive a SPECTRA JWT */
 async function exchangeFacebookToken(accessToken: string): Promise<SpectraToken> {
-  const res = await fetch(`${API_URL}/api/auth/social/facebook`, {
+  const res = await fetch(buildApiUrl("/api/auth/social/facebook"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ access_token: accessToken }),

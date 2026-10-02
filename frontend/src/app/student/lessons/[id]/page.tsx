@@ -591,14 +591,28 @@ export default function LessonViewerPage() {
                   </div>
 
                   {/* Step 4: Quiz */}
-                  <div className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-white/[0.03] border border-white/5">
-                    <span className="flex items-center gap-2 text-slate-300 font-medium">
-                      <HelpCircle className="w-4 h-4 text-emerald-400" /> Lesson Quiz
-                    </span>
-                    <span className="font-bold text-emerald-400 font-mono">
-                      +25 XP
-                    </span>
-                  </div>
+                  {lessonQuiz ? (
+                    <Link
+                      href={`/student/quizzes/${lessonQuiz.quiz_id || (lessonQuiz as any).id}`}
+                      className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-emerald-950/30 hover:bg-emerald-900/40 border border-emerald-500/30 text-emerald-200 transition-colors"
+                    >
+                      <span className="flex items-center gap-2 font-bold">
+                        <HelpCircle className="w-4 h-4 text-emerald-400" /> Lesson Quiz
+                      </span>
+                      <span className="font-extrabold text-emerald-300 font-mono">
+                        +25 XP &rarr;
+                      </span>
+                    </Link>
+                  ) : (
+                    <div className="flex items-center justify-between text-xs p-2.5 rounded-xl bg-white/[0.03] border border-white/5 opacity-60">
+                      <span className="flex items-center gap-2 text-slate-300 font-medium">
+                        <HelpCircle className="w-4 h-4 text-emerald-400" /> Lesson Quiz
+                      </span>
+                      <span className="font-bold text-slate-500 font-mono">
+                        N/A
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-2 border-t border-white/[0.08]">

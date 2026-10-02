@@ -13,7 +13,7 @@ class Question(Base):
     question_text = Column(Text, nullable=False)
     question_type = Column(String(20), default="MCQ")  # MCQ, MULTI_SELECT
     options = Column(Text, nullable=False)  # JSON-encoded array of options: ["A) ...", "B) ..."]
-    correct_answer = Column(String(100), nullable=False)  # Answer key or exact string
+    correct_answer = Column(Text, nullable=False)  # Answer key or exact string
     explanation = Column(Text, nullable=True)  # Detailed feedback for student improvement
     difficulty = Column(String(20), default="MEDIUM", index=True)  # EASY, MEDIUM, HARD
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
@@ -74,7 +74,7 @@ class QuizResponse(Base):
     id = Column(Integer, primary_key=True, index=True)
     attempt_id = Column(Integer, ForeignKey("quiz_attempts.id", ondelete="CASCADE"), nullable=False, index=True)
     question_id = Column(Integer, ForeignKey("questions.id", ondelete="CASCADE"), nullable=False, index=True)
-    selected_answer = Column(String(100), nullable=True)
+    selected_answer = Column(Text, nullable=True)
     is_correct = Column(Boolean, nullable=False, default=False)
     time_taken = Column(Integer, default=0)  # Seconds spent on question
 

@@ -395,6 +395,7 @@ def get_lesson_quiz(
 
     return QuizOut(
         id=quiz.id,
+        quiz_id=quiz.id,
         subject_id=quiz.subject_id,
         lesson_id=quiz.lesson_id,
         topic_id=quiz.topic_id,
